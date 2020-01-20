@@ -126,7 +126,7 @@ resolveDependencies() {
     plugin="$1"
     jpi="$(getArchiveFilename "$plugin")"
 
-    dependencies="$(unzip -p "$jpi" META-INF/MANIFEST.MF | tr -d '\r' | tr '\n' '|' | sed -e 's#| ##g' | tr '|' '\n' | grep "^Plugin-Dependencies: " | sed -e 's#^Plugin-Dependencies: ##')"
+    dependencies="$(unzip -p "$jpi" META-INF/MANIFEST.MF | sed -n '/Plugin-Dependencies:/,/^[^ ]/p' | egrep '^(Plugin-Dependencies| )' | sed 's/Plugin-Dependencies://'|sed 's/ //g' | tr -d '\r' | tr -d '\n')"
 
     if [[ ! $dependencies ]]; then
         echo " > $plugin has no dependencies"
